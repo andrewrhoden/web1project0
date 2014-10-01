@@ -1,0 +1,42 @@
+/*AREAS*/
+#background
+{
+	background-color:rgb(200,200,200);
+}
+#customH1Tag
+{
+	text-align:center; 
+	font-weight:bold;
+}
+#resumeBody
+{
+	/* text-align:center; */
+	background-color:rgb(120,120,120);
+}
+#rawImageArea
+{
+	width:280px;
+	height:380px;
+	float:right;
+}
+#imageArea
+{
+	float:right;
+}
+#bodyInnerTableArea
+{
+	padding-top:40px;
+}
+
+/*HTML ELEMENTS*/
+@font-face 
+{
+	font-family : ModernFont;
+	src : url(../fonts/modern.ttf);
+}
+.ModernFontClassification
+{	
+	font-family : ModernFont;
+}
+
+

@@ -1,0 +1,139 @@
+asd"use strict";	// use more strict set of syntax rules
+
+var TILE_SIZE = 150;
+var BLANK_TOP = (3 * TILE_SIZE) + "px";	// y value for blank tile
+var BLANK_LEFT = (3 * TILE_SIZE) + "px";	// x value for blank tile
+
+// execute function when window has loaded
+window.onload = function() {
+	$("shufflebutton").observe("click", shuffle);	// event listener for click on shuffle button
+	loadTiles();
+}
+
+// positions, styles and add event listeners to tiles
+function loadTiles() {
+	var xPos = 0;
+	var yPos = 0;
+	for (var a = 0; a < $$("#puzzlearea > div").length; a++) {
+		if(a % 4 == 0 && a != 0) {	// every 4th tile drop down a row
+			xPos = 0;
+			yPos += TILE_SIZE;
+		}
+		$$("#puzzlearea > div")[a].style.left = xPos + "px";	// set horizontal position of tile
+		$$("#puzzlearea > div")[a].style.top = yPos + "px";	// set vertical position of tile
+		$$("#puzzlearea > div")[a].style.backgroundImage = "url(\"background.jpg\")";	// set tile's background image
+		$$("#puzzlearea > div")[a].style.backgroundPosition = -xPos + "px " + -yPos + "px";	// position background image
+		$$("#puzzlearea > div")[a].value = a + 1;	// set tile's value to its number
+		$$("#puzzlearea > div")[a].id = a + 1;		//set tile's id to its number
+		$$("#puzzlearea > div")[a].observe("click", tileClick);	// event listner for click on tile
+		$$("#puzzlearea > div")[a].observe("mouseover", highlight);	// event listener for mouse on tile
+		$$("#puzzlearea > div")[a].observe("mouseout", unhighlight);	// event listener for mouse outside tile
+		xPos += TILE_SIZE;
+	}
+	TILE_SIZE = $$("#puzzlearea > div")[0].getHeight();
+	$$("#puzzlearea > div")[0].style.height = $$("#puzzlearea > div")[0].getHeight() - 10;
+	$$("#puzzlearea > div")[0].style.width = $$("#puzzlearea > div")[0].getWidth() - 10;
+	$("puzzlearea").style.height = $$("#puzzlearea > div")[0].getHeight() * 4;
+	$("puzzlearea").style.width = $$("#puzzlearea > div")[0].getWidth() * 4;
+}
+
+// simulates 250 moves to shuffle puzzle
+function shuffle(event) {
+	for(var a=0; a<250; a++) {
+		shuffleTiles();
+	}
+}
+
+// move tile when clicked
+function tileClick(event) {
+	var temp = 0;
+	var top = parseInt(this.getStyle("top"));
+	var left = parseInt(this.getStyle("left"));
+	if(top + TILE_SIZE == parseInt(BLANK_TOP) && left == parseInt(BLANK_LEFT)) {		// if blank tile below
+		temp = BLANK_TOP;
+		BLANK_TOP = this.getStyle("top");	// swap current and blank tiles
+		this.style.top = temp;
+	}
+	else if(top - TILE_SIZE == parseInt(BLANK_TOP) && left == parseInt(BLANK_LEFT)) {	// if blank tile above
+		temp = BLANK_TOP;
+		BLANK_TOP = this.getStyle("top");	// swap current and blank tiles
+		this.style.top = temp;
+	}
+	else if(top == parseInt(BLANK_TOP) && left + TILE_SIZE == parseInt(BLANK_LEFT)) {	// if blank tile to the right
+		temp = BLANK_LEFT;
+		BLANK_LEFT = this.getStyle("left");	// swap current and blank tiles
+		this.style.left = temp;
+	}
+	else if(top == parseInt(BLANK_TOP) && left - TILE_SIZE == parseInt(BLANK_LEFT)) {	// if blank tile to the left
+		temp = BLANK_LEFT;
+		BLANK_LEFT = this.getStyle("left");	// swap current and blank tiles
+		this.style.left = temp;
+	}
+}
+
+// highlight movable tiles in red
+function highlight(event) {
+	var top = parseInt(this.getStyle("top"));
+	var left = parseInt(this.getStyle("left"));
+	if(isNeighbor(top, left)) {	// if current tile neighbors blank tile
+		this.addClassName("red");	// highlight tile in red
+	}
+}
+
+// determines if tile at provided coordinates neighbors the blank tile
+function isNeighbor(top, left) {
+	if((parseInt(BLANK_TOP) + TILE_SIZE == top && parseInt(BLANK_LEFT) == left) || 
+		(parseInt(BLANK_TOP) - TILE_SIZE == top && parseInt(BLANK_LEFT) == left) || 
+		(parseInt(BLANK_TOP) == top && parseInt(BLANK_LEFT) + TILE_SIZE == left) || 
+		(parseInt(BLANK_TOP) == top && parseInt(BLANK_LEFT) - TILE_SIZE == left)) {
+			return true;	// return true if tile neighbors blank tile
+	}
+	else {
+		return false;
+	}
+}
+
+// unhighlight tile after mouse moves away
+function unhighlight(event) {
+	for (var a = 0; a < $$("#puzzlearea > div.red").length; a++) {
+		$$("#puzzlearea > div.red")[a].removeClassName("red"); // remove highlighting from tiles
+	}
+}
+
+// makes one random move
+function shuffleTiles() {
+	var possMoves = [];	// array stores values of tiles that can move
+	for (var a = 0; a < $$("#puzzlearea > div").length; a++) {
+		var top = parseInt($$("#puzzlearea > div")[a].getStyle("top"));
+		var left = parseInt($$("#puzzlearea > div")[a].getStyle("left"));
+		if(isNeighbor(top, left)) {	// if tile neighbors blank tile
+			possMoves.push(getTile(top, left));	//add tile's value to array
+		}
+	}
+	var randIndex = parseInt(Math.random() * possMoves.length);	// random index in array
+	var randTile = possMoves[randIndex];	// random tile to move
+	var moveTop = $("" + randTile).getStyle("top");		// get coordinates for random tile
+	var moveLeft = $("" + randTile).getStyle("left");
+	var temp;
+	if(parseInt(BLANK_TOP) != parseInt(moveTop)) {	// if moving vertically
+		temp = BLANK_TOP;
+		BLANK_TOP = moveTop;	// swap random tile and blank tile
+		moveTop = temp;
+		$("" + randTile).style.top = moveTop;	// move random tile to new coordinates
+	}
+	else if(parseInt(BLANK_LEFT) != parseInt(moveLeft)) {	// if moving horizontally
+		temp = BLANK_LEFT;
+		BLANK_LEFT = moveLeft;	// swap random tile and blank tile
+		moveLeft = temp;
+		$("" + randTile).style.left = moveLeft;	// move random tile to new coordinates
+	}
+}
+
+// returns number of tile at provied coordinates
+function getTile(top, left) {
+	for (var a = 0; a < $$("#puzzlearea > div").length; a++) {	// loop through each tile and check if coordinates match
+		if(parseInt($$("#puzzlearea > div")[a].getStyle("top")) == top && parseInt($$("#puzzlearea > div")[a].getStyle("left")) == left) {
+			return $$("#puzzlearea > div")[a].value;	// return value of tile
+		}
+	}
+}

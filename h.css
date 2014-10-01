@@ -1,0 +1,45 @@
+/*AREAS*/
+#background
+{
+	background-color:rgb(200,200,200);
+}
+#customH1Tag
+{
+	text-align:center; 
+	font-weight:bold;
+}
+#resumeBody
+{
+	/* text-align:center; */
+	background-color:rgb(120,120,120);
+}
+#rawImageArea
+{
+	width:280px;
+	height:380px;
+	float:right;
+	box-shadow: rgba(255,0, 0, 0) 0px 0px 14px;
+	-moz-box-shadow: rgba(0, 255, 0, 0) 0px 0px 14px;
+	-webkit-box-shadow: rgba(0, 0, 0, 255) 0px 0px 14px;
+}
+#imageArea
+{
+	float:right;
+}
+#bodyInnerTableArea
+{
+	padding-top:40px;
+}
+
+/*HTML ELEMENTS*/
+@font-face 
+{
+	font-family : ModernFont;
+	src : url(../fonts/modern.ttf);
+}
+.ModernFontClassification
+{	
+	font-family : ModernFont;
+}
+
+
